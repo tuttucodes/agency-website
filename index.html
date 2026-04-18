@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<meta name="theme-color" content="#000000" />
+
+<title>HELIX — Applications · Web Systems · Applied AI</title>
+<meta name="description" content="HELIX is an independent engineering studio designing and shipping category-defining apps, web platforms, and AI systems for ambitious teams." />
+
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=satoshi@300,400,500,700&f[]=jetbrains-mono@400,500&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#000000',
+          surface: '#0A0A0A',
+          'surface-2': '#111111',
+          border: '#1C1C1C',
+          'border-hi': '#2A2A2A',
+          text: '#FAFAFA',
+          'text-dim': '#8A8A8A',
+          'text-mute': '#525252',
+          accent: '#00FF88',
+          'accent-2': '#7C3AED',
+        },
+        fontFamily: {
+          display: ['"Clash Display"', 'serif'],
+          sans: ['Satoshi', 'ui-sans-serif', 'system-ui'],
+          mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+        letterSpacing: {
+          tightest: '-0.04em',
+          tighter: '-0.03em',
+          tight: '-0.02em',
+        },
+      },
+    },
+  };
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" defer></script>
+
+<style>
+  :root {
+    --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-power: cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html, body { background: #000; color: #FAFAFA; }
+  body { font-family: Satoshi, ui-sans-serif, system-ui; }
+  ::selection { background: #00FF88; color: #000; }
+
+  /* Grain overlay — subtle film texture */
+  .grain::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 100; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.5; mix-blend-mode: overlay;
+  }
+
+  /* Aurora mesh — animated radial blobs */
+  .aurora {
+    position: absolute; inset: 0; overflow: hidden;
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 40%, transparent 75%);
+            mask-image: radial-gradient(ellipse at center, #000 40%, transparent 75%);
+  }
+  .aurora span {
+    position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.55;
+    animation: drift 22s ease-in-out infinite;
+  }
+  .aurora span:nth-child(1) { width: 560px; height: 560px; top: -8%; left: -6%; background: #14B8A6; }
+  .aurora span:nth-child(2) { width: 520px; height: 520px; top: 10%; right: -10%; background: #7C3AED; animation-delay: -7s; }
+  .aurora span:nth-child(3) { width: 600px; height: 600px; bottom: -20%; left: 28%; background: #EC4899; opacity: 0.35; animation-delay: -14s; }
+  @keyframes drift {
+    0%, 100% { transform: translate3d(0,0,0) scale(1); }
+    50% { transform: translate3d(6%, -4%, 0) scale(1.08); }
+  }
+
+  /* Kinetic headline — letter-by-letter reveal */
+  .kinetic .word { display: inline-block; overflow: hidden; vertical-align: top; }
+  .kinetic .word > span { display: inline-block; transform: translateY(110%); }
+
+  /* Marquee */
+  .marquee { display: flex; gap: 4rem; animation: marquee 38s linear infinite; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* Magnetic CTA */
+  .magnetic { transition: transform 0.4s var(--ease-expo); }
+
+  /* Custom cursor */
+  .cursor-dot, .cursor-ring {
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 90;
+    transform: translate3d(-50%, -50%, 0); border-radius: 50%;
+    mix-blend-mode: difference;
+  }
+  .cursor-dot { width: 6px; height: 6px; background: #FAFAFA; transition: transform 0.12s linear; }
+  .cursor-ring { width: 38px; height: 38px; border: 1px solid #FAFAFA; transition: transform 0.28s var(--ease-expo), width 0.3s, height 0.3s; }
+  .cursor-ring.is-hover { width: 72px; height: 72px; border-color: #00FF88; }
+  @media (hover: none) { .cursor-dot, .cursor-ring { display: none; } }
+
+  /* Eyebrow — small uppercase label */
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: #8A8A8A;
+  }
+  .eyebrow .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #00FF88; margin-right: 0.6rem; vertical-align: middle; }
+
+  /* Link underline sweep */
+  .link-sweep { position: relative; display: inline-flex; align-items: center; }
+  .link-sweep::after {
+    content: ''; position: absolute; left: 0; bottom: -2px; height: 1px; width: 100%;
+    background: currentColor; transform: scaleX(0); transform-origin: right;
+    transition: transform 0.55s var(--ease-expo);
+  }
+  .link-sweep:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  /* Service card reveal */
+  .svc-card { transition: background 0.5s var(--ease-expo); }
+  .svc-card:hover { background: rgba(0, 255, 136, 0.03); }
+  .svc-card .arrow { transition: transform 0.5s var(--ease-expo); }
+  .svc-card:hover .arrow { transform: translate(8px, -8px); }
+
+  /* Case study card */
+  .case { position: relative; overflow: hidden; border-radius: 2px; }
+  .case img { transition: transform 1.2s var(--ease-expo), filter 0.6s ease; }
+  .case:hover img { transform: scale(1.04); filter: brightness(1.05); }
+  .case .tag {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+    padding: 4px 10px; border: 1px solid rgba(250,250,250,0.2); border-radius: 100px;
+  }
+
+  /* Noise divider */
+  .rule { height: 1px; background: linear-gradient(to right, transparent, #2A2A2A 20%, #2A2A2A 80%, transparent); }
+
+  /* Numbered list ticker */
+  .num { font-feature-settings: 'tnum'; }
+
+  /* Accent glow button */
+  .btn-primary {
+    position: relative; overflow: hidden;
+    background: #00FF88; color: #000;
+    transition: transform 0.4s var(--ease-expo), box-shadow 0.4s ease;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 50px -12px rgba(0,255,136,0.45); }
+  .btn-ghost {
+    background: transparent; color: #FAFAFA; border: 1px solid #2A2A2A;
+    transition: border-color 0.4s, background 0.4s;
+  }
+  .btn-ghost:hover { border-color: #FAFAFA; background: rgba(250,250,250,0.03); }
+
+  /* Focus */
+  :focus-visible { outline: 2px solid #00FF88; outline-offset: 4px; border-radius: 2px; }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .aurora span { animation: none; }
+    .marquee { animation: none; }
+    * { scroll-behavior: auto !important; transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+
+<body class="grain">
+
+<!-- CURSOR -->
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<header class="fixed top-0 inset-x-0 z-50">
+  <div class="mx-auto max-w-[1600px] px-6 md:px-10">
+    <nav class="mt-5 flex items-center justify-between rounded-full border border-border-hi/60 bg-black/40 backdrop-blur-xl px-5 md:px-7 py-3">
+      <a href="#" class="flex items-center gap-2.5" aria-label="HELIX — home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 4 Q12 12 4 20" stroke="#00FF88" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 4 Q12 12 20 20" stroke="#FAFAFA" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="1.6" fill="#00FF88"/>
+        </svg>
+        <span class="font-display font-semibold text-[17px] tracking-tight">HELIX</span>
+      </a>
+
+      <ul class="hidden lg:flex items-center gap-8 text-[13px] text-text-dim">
+        <li><a href="#services" class="link-sweep hover:text-text">Services</a></li>
+        <li><a href="#work" class="link-sweep hover:text-text">Work</a></li>
+        <li><a href="#capabilities" class="link-sweep hover:text-text">Capabilities</a></li>
+        <li><a href="#process" class="link-sweep hover:text-text">Process</a></li>
+        <li><a href="#studio" class="link-sweep hover:text-text">Studio</a></li>
+      </ul>
+
+      <a href="#contact" class="magnetic btn-primary rounded-full px-5 py-2.5 text-[13px] font-medium">
+        Start a project
+        <span class="ml-1">→</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="relative min-h-[100svh] flex flex-col justify-end overflow-hidden pt-40 pb-14">
+  <div class="aurora" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="relative mx-auto max-w-[1600px] w-full px-6 md:px-10">
+
+    <!-- Top meta row -->
+    <div class="flex items-start justify-between mb-16 md:mb-24 gap-6">
+      <p class="eyebrow max-w-[22ch]">
+        <span class="dot"></span>Independent engineering studio — est. MMXX
+      </p>
+      <p class="hidden md:block text-text-dim text-sm max-w-[30ch] text-right leading-snug">
+        Based in Bangalore & Lisbon.<br/>Shipping worldwide across 14 timezones.
+      </p>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="kinetic font-display font-semibold text-[12.5vw] md:text-[9.5vw] leading-[0.92] tracking-tightest">
+      <span class="word"><span>We&nbsp;engineer</span></span><br/>
+      <span class="word"><span>the&nbsp;</span></span><span class="word"><span>interfaces</span></span>&nbsp;<span class="word"><span class="italic font-normal text-text-dim">of</span></span><br/>
+      <span class="word"><span>tomorrow&#39;s</span></span>&nbsp;<span class="word"><span class="text-accent">software.</span></span>
+    </h1>
+
+    <!-- Sub row -->
+    <div class="mt-14 md:mt-20 grid grid-cols-12 gap-6">
+      <p class="col-span-12 md:col-span-5 text-lg md:text-xl text-text leading-relaxed">
+        HELIX is a 22-person studio building category-defining <em class="text-text-dim not-italic">apps</em>, <em class="text-text-dim not-italic">web platforms</em>, and <em class="text-text-dim not-italic">applied&nbsp;AI</em> for founders and enterprise teams who refuse to ship anything ordinary.
+      </p>
+
+      <div class="col-span-12 md:col-start-8 md:col-span-5 flex flex-col gap-5 md:items-end">
+        <div class="flex flex-wrap gap-3">
+          <a href="#work" class="btn-ghost magnetic rounded-full px-6 py-3 text-sm">See selected work →</a>
+          <a href="#contact" class="btn-primary magnetic rounded-full px-6 py-3 text-sm font-medium">Book intro call</a>
+        </div>
+        <div class="eyebrow">Replies within 8 business hours · NDAs standard</div>
+      </div>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="mt-16 md:mt-20 flex items-center justify-between pt-6 border-t border-border">
+      <span class="eyebrow">Scroll · 01 / 08</span>
+      <div class="flex items-center gap-2 text-text-mute text-xs font-mono">
+        <span class="block w-8 h-px bg-text-mute"></span> latest: AURORA-TRADER launched · GA · 2026
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLIENT MARQUEE ============ -->
+<section class="py-10 border-y border-border overflow-hidden">
+  <div class="marquee font-display text-5xl md:text-6xl text-text-dim whitespace-nowrap">
+    <!-- duplicated for loop -->
+    <span>Stripe&nbsp;/</span><span>Notion&nbsp;/</span><span>Perplexity&nbsp;/</span><span>Ramp&nbsp;/</span><span>Vercel&nbsp;/</span><span>Figma&nbsp;/</span><span>Linear&nbsp;/</span><span>Anthropic&nbsp;/</span><span>OpenAI&nbsp;/</span><span>Arc&nbsp;/</span>
+    <span aria-hidden="true">Stripe&nbsp;/</span><span aria-hidden="true">Notion&nbsp;/</span><span aria-hidden="true">Perplexity&nbsp;/</span><span aria-hidden="true">Ramp&nbsp;/</span><span aria-hidden="true">Vercel&nbsp;/</span><span aria-hidden="true">Figma&nbsp;/</span><span aria-hidden="true">Linear&nbsp;/</span><span aria-hidden="true">Anthropic&nbsp;/</span><span aria-hidden="true">OpenAI&nbsp;/</span><span aria-hidden="true">Arc&nbsp;/</span>
+  </div>
+</section>
+
+<!-- ============ SERVICES ============ -->
+<section id="services" class="relative py-28 md:py-40">
+  <div class="mx-auto max-w-[1600px] px-6 md:px-10">
+
+    <div class="grid grid-cols-12 gap-6 mb-16 md:mb-24">
+      <div class="col-span-12 md:col-span-4">
+        <p class="eyebrow"><span class="dot"></span>02 / Services</p>
+      </div>
+      <div class="col-span-12 md:col-span-8">
+        <h2 class="font-display text-5xl md:text-7xl tracking-tight leading-[0.98]">
+          Three disciplines.<br/>
+          <span class="text-text-dim">One engineering standard.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 border-t border-border-hi">
+      <!-- Service 1 -->
+      <article class="svc-card group relative p-8 md:p-10 border-b md:border-b-0 md:border-r border-border-hi min-h-[520px] flex flex-col">
+        <div class="flex items-start justify-between">
+          <span class="font-mono text-xs text-text-mute">01</span>
+          <svg class="arrow" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path d="M8 20 L20 8 M20 8 H10 M20 8 V18" stroke="#FAFAFA" stroke-width="1.4" />
+          </svg>
+        </div>
+
+        <h3 class="mt-20 font-display text-4xl md:text-5xl leading-[0.95] tracking-tight">
+          Native<br/>Applications
+        </h3>
+
+        <p class="mt-6 text-text-dim leading-relaxed">
+          iOS, Android, and desktop products with the motion discipline of first-party apps. Swift / Kotlin / React Native / Electron — chosen per engagement, never ideology.
+        </p>
+
+        <ul class="mt-auto pt-8 space-y-2.5 text-sm font-mono text-text-dim">
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-text-mute"></span>SwiftUI &amp; Jetpack Compose</li>
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-text-mute"></span>React Native + Expo router</li>
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-text-mute"></span>Offline-first sync</li>
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-text-mute"></span>App Store launch &amp; growth</li>
+        </ul>
+      </article>
+
+      <!-- Service 2 -->
+      <article class="svc-card group relative p-8 md:p-10 border-b md:border-b-0 md:border-r border-border-hi min-h-[520px] flex flex-col">
+        <div class="flex items-start justify-between">
+          <span class="font-mono text-xs text-text-mute">02</span>
+          <svg class="arrow" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path d="M8 20 L20 8 M20 8 H10 M20 8 V18" stroke="#FAFAFA" stroke-width="1.4" />
+          </svg>
+        </div>
+
+        <h3 class="mt-20 font-display text-4xl md:text-5xl leading-[0.95] tracking-tight">
+          Web<br/>Platforms
+        </h3>
+
+        <p class="mt-6 text-text-dim leading-relaxed">
+          High-conversion marketing surfaces and dense SaaS consoles. Next.js on Vercel Fluid Compute; every page a statement, every interaction sub-150ms.
+        </p>
+
+        <ul class="mt-auto pt-8 space-y-2.5 text-sm font-mono text-text-dim">
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-text-mute"></span>Next.js App Router + RSC</li>
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-text-mute"></span>Headless CMS &amp; MDX</li>
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-text-mute"></span>Design systems in TS</li>
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-text-mute"></span>Core Web Vitals 98+</li>
+        </ul>
+      </article>
+
+      <!-- Service 3 -->
+      <article class="svc-card group relative p-8 md:p-10 min-h-[520px] flex flex-col">
+        <div class="flex items-start justify-between">
+          <span class="font-mono text-xs text-text-mute">03</span>
+          <svg class="arrow" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path d="M8 20 L20 8 M20 8 H10 M20 8 V18" stroke="#00FF88" stroke-width="1.4" />
+          </svg>
+        </div>
+
+        <h3 class="mt-20 font-display text-4xl md:text-5xl leading-[0.95] tracking-tight">
+          Applied<br/><span class="text-accent">AI&nbsp;Systems</span>
+        </h3>
+
+        <p class="mt-6 text-text-dim leading-relaxed">
+          Agents, RAG pipelines, and evaluation harnesses that survive contact with real users. Typed, observable, cost-instrumented from day one.
+        </p>
+
+        <ul class="mt-auto pt-8 space-y-2.5 text-sm font-mono text-text-dim">
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-accent"></span>Claude / GPT / open-weight</li>
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-accent"></span>LangGraph &amp; custom agents</li>
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-accent"></span>Evals, traces, guardrails</li>
+          <li class="flex items-center gap-3"><span class="h-px w-4 bg-accent"></span>Prod-grade RAG + reranking</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SELECTED WORK ============ -->
+<section id="work" class="relative py-28 md:py-40 border-t border-border">
+  <div class="mx-auto max-w-[1600px] px-6 md:px-10">
+
+    <div class="flex items-end justify-between mb-14 md:mb-20 gap-6 flex-wrap">
+      <div>
+        <p class="eyebrow mb-5"><span class="dot"></span>03 / Selected Work</p>
+        <h2 class="font-display text-5xl md:text-7xl tracking-tight leading-[0.98] max-w-[18ch]">
+          Shipped with partners <span class="italic text-text-dim font-normal">who</span> demand&nbsp;excellence.
+        </h2>
+      </div>
+      <a href="#" class="link-sweep text-sm text-text-dim hover:text-text">Full archive (24) →</a>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6 md:gap-8">
+
+      <!-- Case 01 — AURORA Trader -->
+      <article class="case col-span-12 lg:col-span-7 bg-surface border border-border-hi rounded-sm overflow-hidden">
+        <div class="aspect-[16/10] overflow-hidden bg-gradient-to-br from-[#0b2a2a] to-[#1b0a2c] relative">
+          <img
+            src="https://images.unsplash.com/photo-1642052519254-6b14d6d4e5f0?w=1600&q=80&auto=format&fit=crop"
+            alt="Screenshot of AURORA trading terminal with real-time order book and candlestick charts in dark interface"
+            class="w-full h-full object-cover opacity-80"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        </div>
+        <div class="p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-5 flex-wrap">
+            <span class="tag">Fintech</span>
+            <span class="tag">iOS · Web · ML</span>
+            <span class="tag">2025 → 2026</span>
+          </div>
+          <h3 class="font-display text-3xl md:text-4xl tracking-tight leading-tight">
+            AURORA Trader — zero-latency options terminal for prosumer traders.
+          </h3>
+          <div class="mt-6 flex items-center justify-between">
+            <p class="text-text-dim text-sm max-w-[48ch]">
+              Full-stack rebuild on Rust + Next.js. 18ms median order ack, ML-driven trade suggestions.
+            </p>
+            <span class="font-mono text-xs text-text-mute">CASE · 01</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Case 02 — Lumen AI -->
+      <article class="case col-span-12 lg:col-span-5 bg-surface border border-border-hi rounded-sm overflow-hidden">
+        <div class="aspect-[4/5] overflow-hidden bg-gradient-to-br from-[#1a0f2e] to-[#0a0a1e] relative">
+          <img
+            src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1400&q=80&auto=format&fit=crop"
+            alt="Abstract violet and teal neural network visualization, glowing nodes on dark canvas"
+            class="w-full h-full object-cover opacity-70"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        </div>
+        <div class="p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-5 flex-wrap">
+            <span class="tag">AI · Enterprise</span>
+            <span class="tag">RAG · Agents</span>
+          </div>
+          <h3 class="font-display text-3xl md:text-4xl tracking-tight leading-tight">
+            Lumen — internal-knowledge agent for a Fortune 100 bank.
+          </h3>
+          <div class="mt-6 flex items-center justify-between">
+            <p class="text-text-dim text-sm max-w-[34ch]">
+              42k documents, SOC 2, 96% answer accuracy under red-team evaluation.
+            </p>
+            <span class="font-mono text-xs text-text-mute">CASE · 02</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Case 03 — Orbit -->
+      <article class="case col-span-12 lg:col-span-5 bg-surface border border-border-hi rounded-sm overflow-hidden">
+        <div class="aspect-[4/5] overflow-hidden bg-gradient-to-br from-[#0a2013] to-[#08120a] relative">
+          <img
+            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&q=80&auto=format&fit=crop"
+            alt="Analytics dashboard on laptop showing charts, growth metrics, and KPI cards in dark UI"
+            class="w-full h-full object-cover opacity-75"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        </div>
+        <div class="p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-5 flex-wrap">
+            <span class="tag">SaaS</span>
+            <span class="tag">Web Platform</span>
+          </div>
+          <h3 class="font-display text-3xl md:text-4xl tracking-tight leading-tight">
+            Orbit — ops console for a Series-C logistics startup.
+          </h3>
+          <div class="mt-6 flex items-center justify-between">
+            <p class="text-text-dim text-sm max-w-[34ch]">
+              150 internal dashboards → one typed canvas. 3.4× faster task completion.
+            </p>
+            <span class="font-mono text-xs text-text-mute">CASE · 03</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Case 04 — Meridian -->
+      <article class="case col-span-12 lg:col-span-7 bg-surface border border-border-hi rounded-sm overflow-hidden">
+        <div class="aspect-[16/10] overflow-hidden bg-gradient-to-br from-[#2a1a08] to-[#0a0a0a] relative">
+          <img
+            src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?w=1600&q=80&auto=format&fit=crop"
+            alt="Close-up of iPhone showing a minimal fitness tracking app with typographic stats and dark theme"
+            class="w-full h-full object-cover opacity-80"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        </div>
+        <div class="p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-5 flex-wrap">
+            <span class="tag">Consumer iOS</span>
+            <span class="tag">Apple Design Award '25</span>
+          </div>
+          <h3 class="font-display text-3xl md:text-4xl tracking-tight leading-tight">
+            Meridian — daily ritual app with on-device coaching model.
+          </h3>
+          <div class="mt-6 flex items-center justify-between">
+            <p class="text-text-dim text-sm max-w-[48ch]">
+              SwiftUI + Core ML. 1.2M downloads in launch week, 4.9★ average.
+            </p>
+            <span class="font-mono text-xs text-text-mute">CASE · 04</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ METRICS BAND ============ -->
+<section class="relative py-24 border-y border-border bg-surface-2/50">
+  <div class="mx-auto max-w-[1600px] px-6 md:px-10 grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-6">
+    <div>
+      <div class="font-display text-6xl md:text-7xl tracking-tightest num">47</div>
+      <p class="eyebrow mt-2">Products shipped</p>
+    </div>
+    <div>
+      <div class="font-display text-6xl md:text-7xl tracking-tightest num">$2.1B</div>
+      <p class="eyebrow mt-2">Portfolio valuation</p>
+    </div>
+    <div>
+      <div class="font-display text-6xl md:text-7xl tracking-tightest num">22</div>
+      <p class="eyebrow mt-2">Engineers &amp; designers</p>
+    </div>
+    <div>
+      <div class="font-display text-6xl md:text-7xl tracking-tightest num text-accent">98</div>
+      <p class="eyebrow mt-2">Avg Lighthouse score</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CAPABILITIES (Swiss matrix) ============ -->
+<section id="capabilities" class="relative py-28 md:py-40">
+  <div class="mx-auto max-w-[1600px] px-6 md:px-10">
+
+    <div class="grid grid-cols-12 gap-6 mb-14 md:mb-20">
+      <div class="col-span-12 md:col-span-4">
+        <p class="eyebrow"><span class="dot"></span>04 / Capabilities</p>
+      </div>
+      <div class="col-span-12 md:col-span-8">
+        <h2 class="font-display text-5xl md:text-7xl tracking-tight leading-[0.98]">
+          A stack chosen for <span class="italic text-text-dim font-normal">longevity</span>,<br/>
+          not novelty.
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 border-t border-l border-border-hi text-sm">
+      <!-- row 1 -->
+      <div class="p-6 border-b border-r border-border-hi">
+        <p class="eyebrow mb-3">Languages</p>
+        <ul class="space-y-1.5 text-text">
+          <li>TypeScript</li><li>Swift</li><li>Kotlin</li><li>Rust</li><li>Python</li><li>Go</li>
+        </ul>
+      </div>
+      <div class="p-6 border-b border-r border-border-hi">
+        <p class="eyebrow mb-3">Frameworks</p>
+        <ul class="space-y-1.5 text-text">
+          <li>Next.js</li><li>React Native / Expo</li><li>SwiftUI</li><li>Jetpack Compose</li><li>FastAPI</li><li>Hono</li>
+        </ul>
+      </div>
+      <div class="p-6 border-b border-r border-border-hi">
+        <p class="eyebrow mb-3">AI / ML</p>
+        <ul class="space-y-1.5 text-text">
+          <li>Claude / GPT / Gemini</li><li>vLLM · Triton</li><li>LangGraph</li><li>Pinecone · Qdrant</li><li>Core ML · ONNX</li><li>Weights &amp; Biases</li>
+        </ul>
+      </div>
+      <div class="p-6 border-b border-r border-border-hi">
+        <p class="eyebrow mb-3">Infrastructure</p>
+        <ul class="space-y-1.5 text-text">
+          <li>Vercel · Cloudflare</li><li>Supabase · Neon</li><li>AWS · GCP</li><li>Temporal</li><li>Terraform</li><li>Datadog · Sentry</li>
+        </ul>
+      </div>
+      <!-- row 2 -->
+      <div class="p-6 border-b border-r border-border-hi">
+        <p class="eyebrow mb-3">Design</p>
+        <ul class="space-y-1.5 text-text">
+          <li>Figma · Framer</li><li>Design tokens</li><li>Brand systems</li><li>Motion design</li><li>Illustration</li><li>3D · WebGL</li>
+        </ul>
+      </div>
+      <div class="p-6 border-b border-r border-border-hi">
+        <p class="eyebrow mb-3">Product</p>
+        <ul class="space-y-1.5 text-text">
+          <li>Discovery sprints</li><li>JTBD research</li><li>Roadmapping</li><li>GTM advisory</li><li>A/B &amp; analytics</li><li>Pricing design</li>
+        </ul>
+      </div>
+      <div class="p-6 border-b border-r border-border-hi">
+        <p class="eyebrow mb-3">Quality</p>
+        <ul class="space-y-1.5 text-text">
+          <li>TDD · contract tests</li><li>Playwright · Detox</li><li>Load &amp; chaos</li><li>SOC 2 · HIPAA prep</li><li>Accessibility AAA</li><li>Security audits</li>
+        </ul>
+      </div>
+      <div class="p-6 border-b border-r border-border-hi">
+        <p class="eyebrow mb-3">Growth</p>
+        <ul class="space-y-1.5 text-text">
+          <li>SEO architecture</li><li>Paid creative</li><li>Lifecycle email</li><li>Referral loops</li><li>Activation tuning</li><li>Analytics infra</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROCESS ============ -->
+<section id="process" class="relative py-28 md:py-40 border-t border-border">
+  <div class="mx-auto max-w-[1600px] px-6 md:px-10">
+
+    <div class="grid grid-cols-12 gap-6 mb-14">
+      <div class="col-span-12 md:col-span-4">
+        <p class="eyebrow"><span class="dot"></span>05 / Engagement</p>
+      </div>
+      <div class="col-span-12 md:col-span-8">
+        <h2 class="font-display text-5xl md:text-7xl tracking-tight leading-[0.98]">
+          Four phases.<br/>
+          <span class="text-text-dim">Fixed scope, fixed price, no surprises.</span>
+        </h2>
+      </div>
+    </div>
+
+    <ol class="divide-y divide-border-hi border-y border-border-hi">
+      <li class="grid grid-cols-12 items-start gap-6 py-8 md:py-12 group hover:bg-surface-2/40 transition-colors px-4 md:px-6">
+        <span class="col-span-2 md:col-span-1 font-mono text-text-mute text-sm">[01]</span>
+        <div class="col-span-10 md:col-span-3">
+          <h3 class="font-display text-2xl md:text-3xl tracking-tight">Discovery</h3>
+          <p class="eyebrow mt-2">2 weeks</p>
+        </div>
+        <p class="col-span-12 md:col-span-7 text-text-dim leading-relaxed md:pl-8">
+          Workshops, customer interviews, and a full technical audit. Delivered as a single principal-grade document — scope, success metrics, architecture, and a fixed-price proposal.
+        </p>
+      </li>
+
+      <li class="grid grid-cols-12 items-start gap-6 py-8 md:py-12 group hover:bg-surface-2/40 transition-colors px-4 md:px-6">
+        <span class="col-span-2 md:col-span-1 font-mono text-text-mute text-sm">[02]</span>
+        <div class="col-span-10 md:col-span-3">
+          <h3 class="font-display text-2xl md:text-3xl tracking-tight">Design &amp; Prototyping</h3>
+          <p class="eyebrow mt-2">3–6 weeks</p>
+        </div>
+        <p class="col-span-12 md:col-span-7 text-text-dim leading-relaxed md:pl-8">
+          Production-grade interfaces in Figma, then coded prototype on the real stack. You interact with the actual thing, not slides. We iterate against live telemetry.
+        </p>
+      </li>
+
+      <li class="grid grid-cols-12 items-start gap-6 py-8 md:py-12 group hover:bg-surface-2/40 transition-colors px-4 md:px-6">
+        <span class="col-span-2 md:col-span-1 font-mono text-accent text-sm">[03]</span>
+        <div class="col-span-10 md:col-span-3">
+          <h3 class="font-display text-2xl md:text-3xl tracking-tight">Build</h3>
+          <p class="eyebrow mt-2">8–16 weeks</p>
+        </div>
+        <p class="col-span-12 md:col-span-7 text-text-dim leading-relaxed md:pl-8">
+          Two-week sprints, weekly demos, full access to our GitHub and Linear. CI/CD, preview environments, and instrumentation land before the first feature ever ships.
+        </p>
+      </li>
+
+      <li class="grid grid-cols-12 items-start gap-6 py-8 md:py-12 group hover:bg-surface-2/40 transition-colors px-4 md:px-6">
+        <span class="col-span-2 md:col-span-1 font-mono text-text-mute text-sm">[04]</span>
+        <div class="col-span-10 md:col-span-3">
+          <h3 class="font-display text-2xl md:text-3xl tracking-tight">Launch &amp; Evolve</h3>
+          <p class="eyebrow mt-2">Ongoing</p>
+        </div>
+        <p class="col-span-12 md:col-span-7 text-text-dim leading-relaxed md:pl-8">
+          Launch support, on-call rotation, and a continuous-improvement retainer. We stay until your team outgrows us — and train them on the way out.
+        </p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIAL ============ -->
+<section class="relative py-28 md:py-40 overflow-hidden">
+  <div class="aurora opacity-40" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="relative mx-auto max-w-[1200px] px-6 md:px-10 text-center">
+    <p class="eyebrow mb-8"><span class="dot"></span>Testimonial · Anya Morales, CPO @ Parallax</p>
+    <blockquote class="font-display text-3xl md:text-5xl leading-[1.12] tracking-tight">
+      &ldquo;We have shipped with five studios over twelve years. HELIX is the first that made our senior engineers ask us to hire them. The <em class="text-accent not-italic">craft</em> speaks for itself — the <em class="text-accent not-italic">candor</em> is rarer.&rdquo;
+    </blockquote>
+    <div class="mt-10 flex items-center justify-center gap-3 text-sm text-text-dim font-mono">
+      <span class="h-px w-10 bg-border-hi"></span>
+      <span>Shipped: Parallax v4 · 2025</span>
+      <span class="h-px w-10 bg-border-hi"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEAM / STUDIO ============ -->
+<section id="studio" class="relative py-28 md:py-40 border-t border-border">
+  <div class="mx-auto max-w-[1600px] px-6 md:px-10">
+
+    <div class="grid grid-cols-12 gap-6 mb-14 md:mb-20">
+      <div class="col-span-12 md:col-span-4">
+        <p class="eyebrow"><span class="dot"></span>06 / Studio</p>
+      </div>
+      <div class="col-span-12 md:col-span-8">
+        <h2 class="font-display text-5xl md:text-7xl tracking-tight leading-[0.98]">
+          Twenty-two operators who would rather <span class="italic text-text-dim font-normal">ship</span> than pitch.
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6">
+      <figure class="group">
+        <div class="aspect-[3/4] overflow-hidden bg-surface rounded-sm">
+          <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&q=80&auto=format&fit=crop" alt="Portrait of studio co-founder in soft lighting" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[800ms]" loading="lazy"/>
+        </div>
+        <figcaption class="mt-4">
+          <p class="font-display text-xl tracking-tight">Ivy Okafor</p>
+          <p class="text-text-dim text-sm">Co-founder · Principal Engineer</p>
+        </figcaption>
+      </figure>
+      <figure class="group">
+        <div class="aspect-[3/4] overflow-hidden bg-surface rounded-sm">
+          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=800&q=80&auto=format&fit=crop" alt="Portrait of studio co-founder in monochrome" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[800ms]" loading="lazy"/>
+        </div>
+        <figcaption class="mt-4">
+          <p class="font-display text-xl tracking-tight">Rafael Cortez</p>
+          <p class="text-text-dim text-sm">Co-founder · Design Director</p>
+        </figcaption>
+      </figure>
+      <figure class="group">
+        <div class="aspect-[3/4] overflow-hidden bg-surface rounded-sm">
+          <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80&auto=format&fit=crop" alt="Portrait of head of AI research" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[800ms]" loading="lazy"/>
+        </div>
+        <figcaption class="mt-4">
+          <p class="font-display text-xl tracking-tight">Mei Zhang</p>
+          <p class="text-text-dim text-sm">Head of Applied AI</p>
+        </figcaption>
+      </figure>
+      <figure class="group">
+        <div class="aspect-[3/4] overflow-hidden bg-surface rounded-sm">
+          <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=800&q=80&auto=format&fit=crop" alt="Portrait of head of engineering" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-[800ms]" loading="lazy"/>
+        </div>
+        <figcaption class="mt-4">
+          <p class="font-display text-xl tracking-tight">Samir Dhillon</p>
+          <p class="text-text-dim text-sm">Head of Engineering</p>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT CTA ============ -->
+<section id="contact" class="relative py-28 md:py-44 overflow-hidden border-t border-border bg-surface">
+  <div class="mx-auto max-w-[1600px] px-6 md:px-10">
+    <div class="grid grid-cols-12 gap-6 mb-12">
+      <div class="col-span-12 md:col-span-4">
+        <p class="eyebrow"><span class="dot"></span>07 / Contact</p>
+      </div>
+      <div class="col-span-12 md:col-span-8">
+        <h2 class="font-display text-[12vw] md:text-[9vw] leading-[0.88] tracking-tightest">
+          Got a project<br/>
+          that deserves&nbsp;<span class="italic font-normal text-text-dim">real</span><br/>
+          <span class="text-accent">engineering?</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-12 gap-6 md:gap-10 border-t border-border-hi pt-10">
+      <!-- Left meta -->
+      <div class="col-span-12 md:col-span-5 space-y-8">
+        <div>
+          <p class="eyebrow mb-3">Direct</p>
+          <a href="mailto:hello@helix.studio" class="font-display text-3xl md:text-4xl tracking-tight link-sweep">hello@helix.studio</a>
+        </div>
+        <div>
+          <p class="eyebrow mb-3">Intro call</p>
+          <a href="#" class="font-display text-3xl md:text-4xl tracking-tight link-sweep">Book 30 min →</a>
+        </div>
+        <div class="pt-6 border-t border-border-hi text-sm text-text-dim leading-relaxed max-w-[44ch]">
+          Engagements start at <span class="text-text">$85k</span>. We take on 6 projects per year and book 2 quarters ahead. Budgets below <span class="text-text">$60k</span> — we&rsquo;ll happily recommend studios we love.
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form class="col-span-12 md:col-span-7 space-y-5" onsubmit="event.preventDefault(); alert('Thanks — we reply within 8 business hours.');">
+        <div class="grid grid-cols-2 gap-5">
+          <label class="block">
+            <span class="eyebrow">Name</span>
+            <input required type="text" name="name" class="mt-2 w-full bg-transparent border-b border-border-hi focus:border-accent transition-colors py-3 outline-none text-text placeholder:text-text-mute" placeholder="Eve Callahan"/>
+          </label>
+          <label class="block">
+            <span class="eyebrow">Company</span>
+            <input type="text" name="company" class="mt-2 w-full bg-transparent border-b border-border-hi focus:border-accent transition-colors py-3 outline-none text-text placeholder:text-text-mute" placeholder="Parallax Labs"/>
+          </label>
+        </div>
+        <label class="block">
+          <span class="eyebrow">Email</span>
+          <input required type="email" name="email" class="mt-2 w-full bg-transparent border-b border-border-hi focus:border-accent transition-colors py-3 outline-none text-text placeholder:text-text-mute" placeholder="eve@parallax.io"/>
+        </label>
+        <div>
+          <span class="eyebrow mb-3 block">Engagement type</span>
+          <div class="flex flex-wrap gap-2">
+            <label class="cursor-pointer">
+              <input type="checkbox" name="scope" value="app" class="peer sr-only"/>
+              <span class="inline-block px-4 py-2 rounded-full border border-border-hi text-sm peer-checked:bg-accent peer-checked:text-black peer-checked:border-accent transition-colors">Native App</span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="scope" value="web" class="peer sr-only"/>
+              <span class="inline-block px-4 py-2 rounded-full border border-border-hi text-sm peer-checked:bg-accent peer-checked:text-black peer-checked:border-accent transition-colors">Web Platform</span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="scope" value="ai" class="peer sr-only"/>
+              <span class="inline-block px-4 py-2 rounded-full border border-border-hi text-sm peer-checked:bg-accent peer-checked:text-black peer-checked:border-accent transition-colors">AI Systems</span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="checkbox" name="scope" value="rebrand" class="peer sr-only"/>
+              <span class="inline-block px-4 py-2 rounded-full border border-border-hi text-sm peer-checked:bg-accent peer-checked:text-black peer-checked:border-accent transition-colors">Full Rebuild</span>
+            </label>
+          </div>
+        </div>
+        <label class="block">
+          <span class="eyebrow">Tell us about the work</span>
+          <textarea name="brief" rows="4" class="mt-2 w-full bg-transparent border-b border-border-hi focus:border-accent transition-colors py-3 outline-none text-text placeholder:text-text-mute resize-none" placeholder="What are you building, and who is it for?"></textarea>
+        </label>
+        <button type="submit" class="btn-primary magnetic rounded-full px-7 py-4 text-sm font-medium mt-2">
+          Send brief →
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="relative py-14 border-t border-border">
+  <div class="mx-auto max-w-[1600px] px-6 md:px-10">
+    <div class="grid grid-cols-12 gap-6 items-end mb-14">
+      <div class="col-span-12 md:col-span-6">
+        <p class="font-display text-[18vw] md:text-[13vw] leading-[0.82] tracking-tightest">HELIX</p>
+      </div>
+      <div class="col-span-6 md:col-span-3 text-sm space-y-2 text-text-dim">
+        <p class="eyebrow mb-4">Studios</p>
+        <p>Bangalore · 560008</p>
+        <p>Lisbon · 1250-096</p>
+      </div>
+      <div class="col-span-6 md:col-span-3 text-sm space-y-2 text-text-dim">
+        <p class="eyebrow mb-4">Follow</p>
+        <p><a href="#" class="link-sweep hover:text-text">Read.cv</a></p>
+        <p><a href="#" class="link-sweep hover:text-text">Are.na</a></p>
+        <p><a href="#" class="link-sweep hover:text-text">GitHub</a></p>
+        <p><a href="#" class="link-sweep hover:text-text">X / @helix</a></p>
+      </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pt-8 border-t border-border text-xs text-text-mute font-mono">
+      <span>© 2026 HELIX Studio Pvt. Ltd. · All rights reserved</span>
+      <span>Crafted in-house. 100% hand-coded. No Webflow.</span>
+      <span class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-accent animate-pulse"></span> Accepting Q3 2026 projects</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ SCRIPTS ============ -->
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+
+  // Smooth scroll (Lenis)
+  if (window.Lenis && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
+    function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+  }
+
+  // GSAP reveals
+  if (window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Kinetic headline — words rise in stagger
+    gsap.to('.kinetic .word > span', {
+      y: 0, duration: 1.3, ease: 'expo.out',
+      stagger: 0.08, delay: 0.2,
+    });
+
+    // Sections fade-up
+    gsap.utils.toArray('section h2, .case, .svc-card, figure').forEach((el) => {
+      gsap.from(el, {
+        opacity: 0, y: 40, duration: 1.1, ease: 'expo.out',
+        scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+      });
+    });
+
+    // Metrics count-up
+    gsap.utils.toArray('.num').forEach((el) => {
+      const target = el.textContent.trim();
+      const match = target.match(/([\d.]+)/);
+      if (!match) return;
+      const num = parseFloat(match[1]);
+      const prefix = target.slice(0, match.index);
+      const suffix = target.slice(match.index + match[0].length);
+      const obj = { v: 0 };
+      gsap.to(obj, {
+        v: num, duration: 2, ease: 'expo.out',
+        scrollTrigger: { trigger: el, start: 'top 80%', once: true },
+        onUpdate: () => {
+          const formatted = num >= 100 ? Math.round(obj.v) : obj.v.toFixed(1).replace(/\.0$/, '');
+          el.textContent = prefix + formatted + suffix;
+        },
+      });
+    });
+  }
+
+  // Custom cursor
+  if (matchMedia('(hover: hover)').matches) {
+    const dot = document.querySelector('.cursor-dot');
+    const ring = document.querySelector('.cursor-ring');
+    let x = 0, y = 0, rx = 0, ry = 0;
+    window.addEventListener('mousemove', (e) => { x = e.clientX; y = e.clientY; dot.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`; });
+    function tick() {
+      rx += (x - rx) * 0.18; ry += (y - ry) * 0.18;
+      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
+      requestAnimationFrame(tick);
+    }
+    tick();
+    document.querySelectorAll('a, button, .magnetic, .svc-card, .case, input, textarea').forEach((el) => {
+      el.addEventListener('mouseenter', () => ring.classList.add('is-hover'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('is-hover'));
+    });
+  }
+
+  // Magnetic buttons
+  document.querySelectorAll('.magnetic').forEach((el) => {
+    el.addEventListener('mousemove', (e) => {
+      const r = el.getBoundingClientRect();
+      const mx = e.clientX - r.left - r.width / 2;
+      const my = e.clientY - r.top - r.height / 2;
+      el.style.transform = `translate(${mx * 0.18}px, ${my * 0.3}px)`;
+    });
+    el.addEventListener('mouseleave', () => { el.style.transform = ''; });
+  });
+
+});
+</script>
+
+</body>
+</html>
