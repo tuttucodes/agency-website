@@ -170,9 +170,27 @@ a, button, label, [role="button"] { touch-action: manipulation; }
 }
 
 /* Marquee */
-.marquee { display: flex; gap: 2.5rem; animation: marquee 38s linear infinite; }
+.marquee { display: flex; gap: 2.5rem; animation: marquee 44s linear infinite; width: max-content; will-change: transform; }
+.marquee:hover { animation-play-state: paused; }
 @media (min-width: 768px) { .marquee { gap: 4rem; } }
 @keyframes marquee { to { transform: translateX(-50%); } }
+
+/* Simple-Icons CSS-mask logos — shape from the remote SVG, fill from the
+   current text colour so light and dark themes both render cleanly without
+   needing a second asset. */
+.client-logo-mask {
+  display: inline-block;
+  background-color: currentColor;
+  -webkit-mask-size: contain;
+          mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  opacity: 0.9;
+  transition: opacity 0.3s var(--ease-expo);
+}
+.client-logo-mask:hover { opacity: 1; }
 
 /* Magnetic */
 .magnetic { transition: transform 0.4s var(--ease-expo); }

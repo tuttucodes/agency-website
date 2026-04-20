@@ -94,26 +94,26 @@ export function Hero() {
           </p>
         </div>
 
-        {/* Kinetic headline */}
+        {/* Kinetic headline — layout reworked so no word lands flush against
+            the viewport edge on narrow mobile. The `&` and `of` are the two
+            words most likely to dangle, so they're paired with an adjacent
+            full word on the same line. */}
         <h1
           ref={headlineRef}
-          className="kinetic font-[family-name:var(--font-display)] font-semibold leading-[0.92] tracking-tightest break-words [overflow-wrap:anywhere] max-w-full"
-          style={{ fontSize: "clamp(2.25rem, 11vw, 12rem)" }}
+          className="kinetic font-[family-name:var(--font-display)] font-semibold leading-[0.94] tracking-tightest break-words [overflow-wrap:anywhere] max-w-full"
+          style={{ fontSize: "clamp(2rem, 10.5vw, 12rem)" }}
         >
-          <span className="word"><span>We design</span></span>{" "}
-          <span className="word">
-            <span className="italic font-normal text-text-dim">&amp;</span>
-          </span>{" "}
-          <span className="word"><span>engineer</span></span>
+          <span className="word"><span>We engineer</span></span>
           <br />
-          <span className="word"><span>the</span></span>{" "}
-          <span className="word"><span>interfaces</span></span>{" "}
+          <span className="word"><span>the interfaces</span></span>{" "}
           <span className="word">
-            <span className="italic font-normal text-text-dim">of</span>
+            <span className="italic font-normal text-text-mute">of</span>
           </span>
           <br />
           <span className="word"><span>tomorrow&apos;s</span></span>{" "}
-          <span className="word"><span className="text-accent">software.</span></span>
+          <span className="word">
+            <span className="text-accent">software.</span>
+          </span>
         </h1>
 
         {/* Lead + CTA grid */}
@@ -122,7 +122,7 @@ export function Hero() {
             className="col-span-12 md:col-span-5 text-base sm:text-lg md:text-xl text-text leading-relaxed"
             data-hero-rise
           >
-            Kernel <span className="text-accent">&amp;</span> Oak is a 22-person studio
+            Kernel <span className="text-accent font-medium">&amp;</span> Oak is a 22-person studio
             building category-defining{" "}
             <em className="text-text-dim not-italic">apps</em>,{" "}
             <em className="text-text-dim not-italic">web platforms</em>, and{" "}
