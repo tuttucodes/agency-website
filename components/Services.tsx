@@ -34,7 +34,7 @@ export function Services() {
                   <span className="font-[family-name:var(--font-mono)] text-xs text-text-mute">
                     {s.n}
                   </span>
-                  <svg className="arrow" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                  <svg className="arrow shrink-0" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
                     <path
                       d="M8 20 L20 8 M20 8 H10 M20 8 V18"
                       stroke={accent ? "var(--k-accent)" : "currentColor"}

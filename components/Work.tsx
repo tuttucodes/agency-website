@@ -23,12 +23,12 @@ export function Work() {
         </div>
 
         <div className="grid grid-cols-12 gap-4 sm:gap-6 md:gap-8">
-          {CASES.map((c) => (
+          {CASES.map((c, i) => (
             <Link
               key={c.slug}
               href={`/work/${c.slug}`}
               aria-label={`Read case study — ${c.title}`}
-              className={`case bg-surface border border-border-hi rounded-sm overflow-hidden col-span-12 block focus-visible:outline-accent ${
+              className={`case bg-surface border border-border-hi rounded-sm overflow-hidden col-span-12 block focus-visible:outline-accent min-w-0 ${
                 c.size === "wide" ? "lg:col-span-7" : "lg:col-span-5"
               }`}
             >
@@ -41,21 +41,28 @@ export function Work() {
                   src={c.img}
                   alt={c.alt}
                   fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  // First case is typically the LCP candidate after the hero; hint
+                  // the browser to fetch it early. Remaining cases stay lazy.
+                  priority={i === 0}
+                  sizes={
+                    c.size === "wide"
+                      ? "(min-width: 1024px) 58vw, 100vw"
+                      : "(min-width: 1024px) 42vw, 100vw"
+                  }
                   className="object-cover opacity-80"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
               </div>
-              <div className="p-5 sm:p-6 md:p-8">
-                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5 flex-wrap">
+              <div className="p-5 sm:p-6 md:p-8 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-5 flex-wrap min-w-0">
                   {c.tags.map((t) => (
                     <span key={t} className="tag">{t}</span>
                   ))}
                 </div>
-                <h3 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl md:text-4xl tracking-tight leading-tight">
+                <h3 className="font-[family-name:var(--font-display)] text-2xl sm:text-3xl md:text-4xl tracking-tight leading-tight break-words [overflow-wrap:anywhere]">
                   {c.title}
                 </h3>
-                <div className="mt-4 sm:mt-6 flex items-end justify-between gap-4">
+                <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row sm:items-end justify-between gap-2 sm:gap-4">
                   <p className="text-text-dim text-sm max-w-[48ch]">{c.blurb}</p>
                   <span className="font-[family-name:var(--font-mono)] text-xs text-text-mute shrink-0">
                     CASE · {c.n}

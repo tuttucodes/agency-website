@@ -51,7 +51,8 @@ export function Studio() {
                   src={m.img}
                   alt={m.alt}
                   fill
-                  sizes="(min-width: 768px) 25vw, 50vw"
+                  loading="lazy"
+                  sizes="(min-width: 1024px) 22vw, (min-width: 640px) 40vw, 50vw"
                   className="object-cover grayscale group-hover:grayscale-0 transition-all duration-[800ms]"
                 />
               </div>

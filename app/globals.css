@@ -123,13 +123,15 @@ a, button, label, [role="button"] { touch-action: manipulation; }
   .link-sweep::after { transition: none; }
 }
 
-/* Grain overlay */
+/* Grain overlay — skipped on mobile (mix-blend-mode is the priciest compositor op) */
 .grain::before {
   content: "";
   position: fixed; inset: 0; z-index: 100; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   opacity: var(--k-grain-op); mix-blend-mode: overlay;
 }
+@media (max-width: 640px) { .grain::before { display: none; } }
+@media (prefers-reduced-motion: reduce) { .grain::before { display: none; } }
 
 /* Aurora blobs — brass + sage + oak haze, swaps with theme */
 .aurora {
@@ -138,10 +140,11 @@ a, button, label, [role="button"] { touch-action: manipulation; }
           mask-image: radial-gradient(ellipse at center, #000 40%, transparent 75%);
 }
 .aurora span {
-  position: absolute; border-radius: 50%; filter: blur(72px); opacity: 0.55;
+  position: absolute; border-radius: 50%; filter: blur(48px); opacity: 0.55;
   animation: drift 22s ease-in-out infinite;
-  width: clamp(280px, 60vw, 620px);
-  height: clamp(280px, 60vw, 620px);
+  will-change: transform;
+  width: clamp(260px, 60vw, 620px);
+  height: clamp(260px, 60vw, 620px);
 }
 .aurora span:nth-child(1) { top: -8%; left: -6%; background: var(--k-brass); opacity: 0.45; }
 .aurora span:nth-child(2) { top: 12%; right: -12%; background: var(--k-sage); opacity: 0.50; animation-delay: -7s; }
@@ -155,9 +158,16 @@ a, button, label, [role="button"] { touch-action: manipulation; }
   50% { transform: translate3d(6%, -4%, 0) scale(1.08); }
 }
 
-/* Kinetic headline */
+/* Kinetic headline — renders at rest by default so no-JS / slow-network users
+   still see the real headline. The `.js-motion` class is added by the Hero
+   after GSAP is imported, which moves the words off-screen just in time for
+   the intro timeline to slide them back into place. */
 .kinetic .word { display: inline-block; overflow: hidden; vertical-align: top; }
-.kinetic .word > span { display: inline-block; transform: translateY(110%); }
+.kinetic .word > span { display: inline-block; }
+.js-motion .kinetic .word > span { transform: translateY(110%); }
+@media (prefers-reduced-motion: reduce) {
+  .js-motion .kinetic .word > span { transform: none; }
+}
 
 /* Marquee */
 .marquee { display: flex; gap: 2.5rem; animation: marquee 38s linear infinite; }

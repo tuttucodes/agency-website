@@ -24,7 +24,7 @@ export default function JournalIndex() {
       <main className="pt-36 sm:pt-44 md:pt-56">
         <header className="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 mb-16 md:mb-24">
           <p className="eyebrow mb-6"><span className="dot" />Journal</p>
-          <h1 className="font-[family-name:var(--font-display)] text-[12vw] md:text-[8vw] leading-[0.9] tracking-tightest">
+          <h1 className="font-[family-name:var(--font-display)] text-[10vw] md:text-[8vw] leading-[0.95] tracking-tightest break-words">
             Notes from
             <br />
             <span className="text-text-dim italic font-normal">inside</span> the studio.

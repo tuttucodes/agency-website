@@ -33,7 +33,9 @@ export function ScrollProgress() {
       aria-hidden="true"
       className="fixed top-0 inset-x-0 h-px z-[60] origin-left"
       style={{
-        background: "linear-gradient(to right, #00ff88, #7c3aed)",
+        // Brand-matched: aged brass → sage, replacing the old mint → violet.
+        background:
+          "linear-gradient(to right, var(--k-brass), var(--k-sage))",
         transform: "scaleX(0)",
       }}
       ref={ref}

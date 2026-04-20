@@ -64,16 +64,16 @@ export function Faq() {
                   aria-expanded={isOpen}
                   aria-controls={`faq-panel-${i}`}
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="w-full grid grid-cols-12 items-start gap-4 sm:gap-6 py-6 md:py-8 text-left group hover:bg-surface-2/40 transition-colors px-2 sm:px-4 md:px-6"
+                  className="w-full grid grid-cols-[auto_1fr_auto] md:grid-cols-12 items-start gap-3 sm:gap-4 md:gap-6 py-6 md:py-8 text-left group hover:bg-surface-2/40 transition-colors px-2 sm:px-4 md:px-6"
                 >
-                  <span className="col-span-2 md:col-span-1 font-[family-name:var(--font-mono)] text-xs sm:text-sm text-text-mute pt-1">
+                  <span className="md:col-span-1 font-[family-name:var(--font-mono)] text-xs sm:text-sm text-text-mute pt-1.5 shrink-0">
                     [{String(i + 1).padStart(2, "0")}]
                   </span>
-                  <h3 className="col-span-9 md:col-span-10 font-[family-name:var(--font-display)] text-xl sm:text-2xl md:text-3xl tracking-tight leading-tight">
+                  <h3 className="md:col-span-10 font-[family-name:var(--font-display)] text-lg sm:text-2xl md:text-3xl tracking-tight leading-snug break-words [overflow-wrap:anywhere] min-w-0">
                     {item.q}
                   </h3>
                   <span
-                    className={`col-span-1 justify-self-end pt-2 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    className={`md:col-span-1 justify-self-end pt-2 shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                       isOpen ? "rotate-45 text-accent" : "text-text-dim"
                     }`}
                     aria-hidden="true"
@@ -86,14 +86,14 @@ export function Faq() {
                 <div
                   id={`faq-panel-${i}`}
                   role="region"
-                  className="grid grid-cols-12 gap-4 sm:gap-6 px-2 sm:px-4 md:px-6 overflow-hidden transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                  className="px-2 sm:px-4 md:px-6 overflow-hidden transition-[grid-template-rows,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
                   style={{
                     display: "grid",
                     gridTemplateRows: isOpen ? "1fr" : "0fr",
                     opacity: isOpen ? 1 : 0,
                   }}
                 >
-                  <div className="col-start-3 md:col-start-2 col-span-10 md:col-span-10 min-h-0">
+                  <div className="min-h-0 md:pl-[calc(8.333%_+_1.5rem)]">
                     <p className="pb-6 md:pb-8 max-w-[68ch] text-text-dim leading-relaxed">
                       {item.a}
                     </p>

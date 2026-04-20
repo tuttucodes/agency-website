@@ -59,13 +59,15 @@ export function Capabilities() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 border-t border-l border-border-hi text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 border-t border-l border-border-hi text-sm">
           {COLS.map((col) => (
-            <div key={col.label} className="p-4 sm:p-6 border-b border-r border-border-hi">
+            <div key={col.label} className="p-4 sm:p-6 border-b border-r border-border-hi min-w-0">
               <p className="eyebrow mb-3">{col.label}</p>
               <ul className="space-y-1.5 text-text">
                 {col.items.map((it) => (
-                  <li key={it}>{it}</li>
+                  <li key={it} className="break-words">
+                    {it}
+                  </li>
                 ))}
               </ul>
             </div>

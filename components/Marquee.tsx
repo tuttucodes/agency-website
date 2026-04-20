@@ -5,8 +5,8 @@ const CLIENTS = [
 
 export function Marquee() {
   return (
-    <section className="py-10 border-y border-border overflow-hidden">
-      <div className="marquee font-[family-name:var(--font-display)] text-5xl md:text-6xl text-text-dim whitespace-nowrap">
+    <section className="py-8 md:py-10 border-y border-border overflow-hidden">
+      <div className="marquee font-[family-name:var(--font-display)] text-4xl sm:text-5xl md:text-6xl text-text-dim whitespace-nowrap">
         {[...CLIENTS, ...CLIENTS].map((name, i) => (
           <span key={i} aria-hidden={i >= CLIENTS.length || undefined}>
             {name}&nbsp;/

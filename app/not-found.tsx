@@ -16,7 +16,7 @@ export default function NotFound() {
         <p className="eyebrow mb-8">
           <span className="dot" />Error 404 · Lost in the helix
         </p>
-        <h1 className="font-[family-name:var(--font-display)] text-[28vw] md:text-[18vw] leading-[0.82] tracking-tightest">
+        <h1 className="font-[family-name:var(--font-display)] text-[22vw] md:text-[18vw] leading-[0.82] tracking-tightest">
           4<span className="text-accent">0</span>4
         </h1>
         <p className="mt-8 text-text-dim text-lg max-w-[44ch] mx-auto">

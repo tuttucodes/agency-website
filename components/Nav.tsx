@@ -72,10 +72,10 @@ export function Nav() {
             </ul>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <ThemeToggle className="hidden sm:inline-block" />
+              <ThemeToggle className="hidden md:inline-block" />
               <Link
                 href="/#contact"
-                className="hidden sm:inline-flex magnetic btn-primary rounded-full px-4 md:px-5 py-2 md:py-2.5 text-[12px] md:text-[13px] font-medium items-center"
+                className="hidden md:inline-flex magnetic btn-primary rounded-full px-4 md:px-5 py-2 md:py-2.5 text-[12px] md:text-[13px] font-medium items-center whitespace-nowrap"
               >
                 <span>Start a project</span>
                 <span className="ml-1">→</span>

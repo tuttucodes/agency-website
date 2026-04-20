@@ -101,7 +101,7 @@ export default async function CaseStudyPage({
                     <span key={t} className="tag">{t}</span>
                   ))}
                 </div>
-                <h1 className="font-[family-name:var(--font-display)] text-[10vw] md:text-[6.5vw] leading-[0.95] tracking-tightest">
+                <h1 className="font-[family-name:var(--font-display)] text-[9vw] md:text-[6.5vw] leading-[0.98] tracking-tightest break-words [overflow-wrap:anywhere]">
                   {c.title}
                 </h1>
               </div>

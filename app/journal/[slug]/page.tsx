@@ -120,8 +120,8 @@ export default async function JournalPostPage({
             {post.category} · {post.readMins} min · {FORMATTER.format(new Date(post.date))}
           </p>
           <h1
-            className="font-[family-name:var(--font-display)] leading-[1] tracking-tightest"
-            style={{ fontSize: "clamp(2.25rem, 7vw, 5rem)" }}
+            className="font-[family-name:var(--font-display)] leading-[1.04] tracking-tightest break-words [overflow-wrap:anywhere]"
+            style={{ fontSize: "clamp(1.875rem, 7vw, 5rem)" }}
           >
             {post.title}
           </h1>

@@ -42,7 +42,7 @@ export function Insights() {
                     {post.readMins} min
                   </span>
                 </div>
-                <h3 className="font-[family-name:var(--font-display)] text-2xl md:text-[28px] tracking-tight leading-[1.1] group-hover:text-accent transition-colors">
+                <h3 className="font-[family-name:var(--font-display)] text-2xl md:text-[28px] tracking-tight leading-[1.1] group-hover:text-accent transition-colors break-words [overflow-wrap:anywhere]">
                   {post.title}
                 </h3>
                 <p className="mt-4 text-text-dim text-sm leading-relaxed">{post.dek}</p>

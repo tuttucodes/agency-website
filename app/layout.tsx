@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Cursor } from "@/components/Cursor";
-import { SmoothScroll } from "@/components/SmoothScroll";
-import { ScrollProgress } from "@/components/ScrollProgress";
+import { ClientOverlays } from "@/components/ClientOverlays";
 
 const SITE_URL = "https://kernelandoak.vercel.app";
+
+// Only the weights we actually use on the page. Trimming this URL shaves
+// ~25-40KB off the font payload versus the pre-rebrand URL that requested
+// Clash 500/600/700 + Satoshi 300/400/500/700 + JetBrains 400/500.
+const FONT_HREF =
+  "https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500,700&f[]=jetbrains-mono@500&display=swap";
 
 const STRUCTURED_DATA = {
   "@context": "https://schema.org",
@@ -85,12 +89,11 @@ const STRUCTURED_DATA = {
   ],
 };
 
-// FOUC guard: read saved theme (or system preference) and apply the class
-// before any paint. Runs synchronously — keep it tiny.
+// FOUC guard: apply stored theme synchronously before any paint.
 const THEME_BOOTSTRAP = `(function(){try{var k='kao-theme';var s=localStorage.getItem(k);var m=window.matchMedia('(prefers-color-scheme: light)').matches;var t=(s==='light'||s==='dark')?s:(m?'light':'dark');var r=document.documentElement;r.classList.remove('light','dark');r.classList.add(t);r.dataset.theme=t;r.style.colorScheme=t;}catch(e){}})();`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://kernelandoak.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Kernel & Oak — Applications · Web Systems · Applied AI",
     template: "%s · Kernel & Oak",
@@ -134,11 +137,35 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://api.fontshare.com" crossOrigin="anonymous" />
+        {/* Font-delivery plumbing: preconnect to both the CSS endpoint (api)
+            and the binary host (cdn) so TLS is warm when the actual font
+            files are requested. Stylesheet itself is preloaded and applied
+            async via the classic media="print" → onLoad="this.media='all'"
+            pattern so it never blocks first paint. */}
+        <link
+          rel="preconnect"
+          href="https://api.fontshare.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preconnect"
+          href="https://cdn.fontshare.com"
+          crossOrigin="anonymous"
+        />
+        <link rel="preload" as="style" href={FONT_HREF} />
         <link
           rel="stylesheet"
-          href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=satoshi@300,400,500,700&f[]=jetbrains-mono@400,500&display=swap"
+          href={FONT_HREF}
+          media="print"
+          // eslint-disable-next-line react/no-unknown-property
+          // @ts-expect-error React's type for onLoad on <link> doesn't accept a string,
+          // but this is the canonical "async stylesheet" handoff and works in all browsers.
+          onLoad="this.media='all'"
         />
+        <noscript>
+          {/* eslint-disable-next-line @next/next/no-css-tags */}
+          <link rel="stylesheet" href={FONT_HREF} />
+        </noscript>
         <script
           // FOUC guard — runs sync before first paint.
           dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }}
@@ -153,9 +180,7 @@ export default function RootLayout({
             __html: JSON.stringify(STRUCTURED_DATA).replace(/</g, "\\u003c"),
           }}
         />
-        <ScrollProgress />
-        <SmoothScroll />
-        <Cursor />
+        <ClientOverlays />
         {children}
       </body>
     </html>

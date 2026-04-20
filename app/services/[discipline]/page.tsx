@@ -76,8 +76,8 @@ export default async function ServicePage({
               <span className="dot" />Service · {s.n} of 03
             </p>
             <h1
-              className="font-[family-name:var(--font-display)] leading-[0.92] tracking-tightest"
-              style={{ fontSize: "clamp(3rem, 10.5vw, 11rem)" }}
+              className="font-[family-name:var(--font-display)] leading-[0.94] tracking-tightest break-words [overflow-wrap:anywhere]"
+              style={{ fontSize: "clamp(2.25rem, 10.5vw, 11rem)" }}
             >
               {s.title.split(" ").map((w, i, arr) => (
                 <span key={w} className={i === arr.length - 1 ? "text-accent" : ""}>

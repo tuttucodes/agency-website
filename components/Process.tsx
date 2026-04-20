@@ -54,17 +54,17 @@ export function Process() {
           {PHASES.map((p) => (
             <li
               key={p.n}
-              className="grid grid-cols-12 items-start gap-6 py-8 md:py-12 group hover:bg-surface-2/40 transition-colors px-4 md:px-6"
+              className="grid grid-cols-12 items-start gap-3 md:gap-6 py-6 md:py-12 group hover:bg-surface-2/40 transition-colors px-3 sm:px-4 md:px-6"
             >
               <span
-                className={`col-span-2 md:col-span-1 font-[family-name:var(--font-mono)] text-sm ${
+                className={`col-span-12 md:col-span-1 font-[family-name:var(--font-mono)] text-xs md:text-sm ${
                   p.accent ? "text-accent" : "text-text-mute"
                 }`}
               >
                 [{p.n}]
               </span>
-              <div className="col-span-10 md:col-span-3">
-                <h3 className="font-[family-name:var(--font-display)] text-2xl md:text-3xl tracking-tight">
+              <div className="col-span-12 md:col-span-3">
+                <h3 className="font-[family-name:var(--font-display)] text-2xl md:text-3xl tracking-tight break-words">
                   {p.title}
                 </h3>
                 <p className="eyebrow mt-2">{p.len}</p>
