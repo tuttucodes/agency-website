@@ -1,0 +1,33 @@
+---
+title: "Stop shipping prompts. Start shipping eval suites."
+dek: "The single workflow change that has accounted for every successful AI product we have launched in the last 18 months."
+category: "Applied AI"
+date: "2026-02-04"
+readMins: 9
+author: "Mei Zhang"
+---
+
+If you cannot tell, on a given Tuesday, whether your AI feature is better or worse than it was last Friday — you do not have a product, you have a prompt. The discipline that closes that gap is evals. Not benchmarks, not vibe checks. A versioned suite of inputs and graders that runs every time anything changes.
+
+## The cheapest possible eval is still better than no eval
+
+Teams stall here because they imagine they need a 10,000-row gold set before they can start. They do not. The first useful eval suite is fifty hand-written prompts and an LLM-as-judge with a one-paragraph rubric. It will catch 80% of regressions for two weeks of effort.
+
+> Every model swap, every prompt edit, every retrieval rebuild — runs the suite first. No suite, no merge. That is the rule.
+
+## What good rubrics look like
+
+A good grader is a paragraph, not a score. Teach the grader the *failure modes* you want caught:
+
+- Hallucinated entities that don't appear in the source corpus.
+- Citations that point to the wrong paragraph.
+- Refusals that leak policy text the user shouldn't see.
+- Answers that technically satisfy the question but miss the user's obvious intent.
+
+An LLM judge reading that rubric will outperform a five-point Likert score every time.
+
+## Where evals stop being optional
+
+Once you cross 1,000 active users, the eval suite is the only thing standing between you and a regression that costs you trust. We treat the suite the way SREs treat error budgets. Falling below the bar blocks deploys. Engineers triage the failures the way they triage incidents.
+
+If you want a single lever to pull on AI product quality this quarter, it is this one.

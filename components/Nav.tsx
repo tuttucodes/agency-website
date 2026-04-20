@@ -2,13 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const LINKS = [
-  { href: "#services", label: "Services" },
-  { href: "#work", label: "Work" },
-  { href: "#capabilities", label: "Capabilities" },
-  { href: "#process", label: "Process" },
-  { href: "#studio", label: "Studio" },
+  { href: "/#services", label: "Services" },
+  { href: "/#work", label: "Work" },
+  { href: "/#capabilities", label: "Capabilities" },
+  { href: "/#process", label: "Process" },
+  { href: "/#studio", label: "Studio" },
+  { href: "/journal", label: "Journal" },
+  { href: "/#faq", label: "FAQ" },
 ];
 
 export function Nav() {
@@ -36,49 +40,53 @@ export function Nav() {
 
   return (
     <>
-      <header className="fixed top-0 inset-x-0 z-50" style={{ paddingTop: "env(safe-area-inset-top)" }}>
+      <header
+        className="fixed top-0 inset-x-0 z-50"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+      >
         <div className="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10">
           <nav
-            className={`mt-3 sm:mt-5 flex items-center justify-between rounded-full border border-border-hi/60 backdrop-blur-xl px-4 sm:px-5 md:px-7 py-2.5 sm:py-3 transition-colors ${
-              scrolled ? "bg-black/70" : "bg-black/40"
+            className={`mt-3 sm:mt-5 flex items-center justify-between rounded-full border border-border-hi/60 backdrop-blur-xl px-3 sm:px-5 md:px-7 py-2.5 sm:py-3 transition-colors ${
+              scrolled ? "bg-surface/80" : "bg-surface/50"
             }`}
           >
-            <Link href="/" className="flex items-center gap-2.5 min-h-11" aria-label="HELIX — home">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M4 4 Q12 12 4 20" stroke="#00FF88" strokeWidth="2" strokeLinecap="round" />
-                <path d="M20 4 Q12 12 20 20" stroke="#FAFAFA" strokeWidth="2" strokeLinecap="round" />
-                <circle cx="12" cy="12" r="1.6" fill="#00FF88" />
-              </svg>
-              <span className="font-[family-name:var(--font-display)] font-semibold text-[16px] sm:text-[17px] tracking-tight">
-                HELIX
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 min-h-11 text-text"
+              aria-label="Kernel & Oak — home"
+            >
+              <Logo size={22} />
+              <span className="font-[family-name:var(--font-display)] font-semibold text-[16px] sm:text-[17px] tracking-tight leading-none">
+                Kernel<span className="text-accent mx-[2px]">&amp;</span>Oak
               </span>
             </Link>
 
-            <ul className="hidden lg:flex items-center gap-8 text-[13px] text-text-dim">
+            <ul className="hidden lg:flex items-center gap-7 text-[13px] text-text-dim">
               {LINKS.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className="link-sweep hover:text-text">
+                  <Link href={l.href} className="link-sweep hover:text-text">
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
 
-            <div className="flex items-center gap-2">
-              <a
-                href="#contact"
+            <div className="flex items-center gap-2 sm:gap-3">
+              <ThemeToggle className="hidden sm:inline-block" />
+              <Link
+                href="/#contact"
                 className="hidden sm:inline-flex magnetic btn-primary rounded-full px-4 md:px-5 py-2 md:py-2.5 text-[12px] md:text-[13px] font-medium items-center"
               >
                 <span>Start a project</span>
                 <span className="ml-1">→</span>
-              </a>
+              </Link>
               <button
                 type="button"
                 aria-label={open ? "Close menu" : "Open menu"}
                 aria-expanded={open}
                 aria-controls="mobile-menu"
                 onClick={() => setOpen((v) => !v)}
-                className="lg:hidden relative h-11 w-11 rounded-full border border-border-hi/60 flex items-center justify-center"
+                className="lg:hidden relative h-11 w-11 rounded-full border border-border-hi/60 flex items-center justify-center text-text"
               >
                 <span
                   className={`block h-px w-5 bg-text transition-transform ${
@@ -107,7 +115,7 @@ export function Nav() {
         }`}
       >
         <div
-          className="absolute inset-0 bg-black/70 backdrop-blur-xl"
+          className="absolute inset-0 bg-ink/70 backdrop-blur-xl"
           onClick={() => setOpen(false)}
         />
         <div
@@ -117,10 +125,13 @@ export function Nav() {
           style={{ paddingTop: "calc(env(safe-area-inset-top) + 84px)" }}
         >
           <nav className="flex-1 px-6 overflow-y-auto">
-            <p className="eyebrow mb-6">
-              <span className="dot" />
-              Menu
-            </p>
+            <div className="flex items-center justify-between mb-6">
+              <p className="eyebrow">
+                <span className="dot" />
+                Menu
+              </p>
+              <ThemeToggle />
+            </div>
             <ul className="space-y-2">
               {LINKS.map((l, i) => (
                 <li
@@ -130,7 +141,7 @@ export function Nav() {
                     transitionDelay: `${open ? 120 + i * 40 : 0}ms`,
                   }}
                 >
-                  <a
+                  <Link
                     href={l.href}
                     onClick={() => setOpen(false)}
                     className={`block font-[family-name:var(--font-display)] text-5xl sm:text-6xl tracking-tightest leading-[0.95] py-2 transition-all duration-500 ${
@@ -139,7 +150,7 @@ export function Nav() {
                     style={{ transitionDelay: `${open ? 120 + i * 50 : 0}ms` }}
                   >
                     {l.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -149,18 +160,18 @@ export function Nav() {
             className="p-6 border-t border-border-hi"
             style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 24px)" }}
           >
-            <a
-              href="#contact"
+            <Link
+              href="/#contact"
               onClick={() => setOpen(false)}
               className="btn-primary rounded-full w-full flex items-center justify-center gap-2 py-4 font-medium text-sm"
             >
               Start a project <span>→</span>
-            </a>
+            </Link>
             <a
-              href="mailto:hello@helix.studio"
+              href="mailto:hello@kernelandoak.com"
               className="block mt-4 text-center text-sm text-text-dim link-sweep"
             >
-              hello@helix.studio
+              hello@kernelandoak.com
             </a>
           </div>
         </div>

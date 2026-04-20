@@ -1,0 +1,35 @@
+---
+title: "React Server Components are a deployment discipline, not a feature."
+dek: "Why most RSC migrations stall, and the boring infrastructure work that decides whether you ship 180KB or 1.4MB."
+category: "Engineering"
+date: "2026-03-18"
+readMins: 7
+author: "Ivy Okafor"
+---
+
+Every serious team we have onboarded in the past year asks the same question on day one: should we move to RSC? The answer in the abstract is yes. The answer in practice is — only if you are willing to treat it as an infrastructure migration, not a refactor.
+
+## What the demos hide
+
+The marketing pages for Server Components show a single component flipping from client to server with a one-line change. Real codebases discover, three weeks in, that the boundary lives at the data layer — and the data layer is the part nobody had time to clean up.
+
+> RSC is not a render strategy. It is a question about who owns secrets, who owns latency, and who owns the cache.
+
+## The four boundaries that actually matter
+
+- Auth and session — moves fully server, but only if your auth provider has a Node SDK that supports streaming.
+- Tracking and consent — needs an explicit client island, otherwise you ship analytics scripts to bots.
+- Forms and mutations — Server Actions only beat REST when you wire optimistic UI with `useOptimistic`.
+- Third-party widgets — most chat, payment, and embed scripts assume `window`. Wrap them or rebuild them.
+
+Until those four are decided in writing, RSC will save you nothing. After they are decided, the size budget speaks for itself: we have shipped two trading interfaces under 200KB this year, both on Next.js 16 with Fluid Compute. Neither team had to abandon a single library — they had to be honest about which library belonged on which side of the boundary.
+
+## A pragmatic checklist
+
+Before your team writes a single `'use client'` directive, run this:
+
+1. Enumerate every piece of client state and label it `session`, `ephemeral`, or `derived`.
+2. Look at every third-party `<script>` and decide: server-proxied, client-islanded, or removed.
+3. Audit your data fetches — which ones can move to the server *now*, and which are blocked on SDK gaps?
+
+If the answers are clear, the migration will take three weeks. If they aren't, stop and make them clear before you touch a line of component code.

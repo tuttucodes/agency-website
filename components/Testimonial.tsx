@@ -9,7 +9,7 @@ export function Testimonial() {
           <span className="dot" />Testimonial · Anya Morales, CPO @ Parallax
         </p>
         <blockquote className="font-[family-name:var(--font-display)] text-3xl md:text-5xl leading-[1.12] tracking-tight">
-          &ldquo;We have shipped with five studios over twelve years. HELIX is the first that
+          &ldquo;We have shipped with five studios over twelve years. Kernel & Oak is the first that
           made our senior engineers ask us to hire them. The{" "}
           <em className="text-accent not-italic">craft</em> speaks for itself — the{" "}
           <em className="text-accent not-italic">candor</em> is rarer.&rdquo;

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { submitLead, type LeadState } from "@/app/actions";
+import { Turnstile } from "@/components/Turnstile";
 
 const INITIAL: LeadState = { ok: false, message: "" };
 
@@ -31,7 +32,7 @@ export function Contact() {
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
         <div className="grid grid-cols-12 gap-6 mb-12">
           <div className="col-span-12 md:col-span-4">
-            <p className="eyebrow"><span className="dot" />07 / Contact</p>
+            <p className="eyebrow"><span className="dot" />09 / Contact</p>
           </div>
           <div className="col-span-12 md:col-span-8">
             <h2 className="font-[family-name:var(--font-display)] text-[12vw] md:text-[9vw] leading-[0.88] tracking-tightest">
@@ -49,16 +50,16 @@ export function Contact() {
             <div>
               <p className="eyebrow mb-3">Direct</p>
               <a
-                href="mailto:hello@helix.studio"
+                href="mailto:hello@kernelandoak.com"
                 className="font-[family-name:var(--font-display)] text-3xl md:text-4xl tracking-tight link-sweep"
               >
-                hello@helix.studio
+                hello@kernelandoak.com
               </a>
             </div>
             <div>
               <p className="eyebrow mb-3">Intro call</p>
               <a
-                href="mailto:hello@helix.studio?subject=Book%20a%2030-minute%20intro%20call&body=Hi%20HELIX%20%E2%80%94%20I%27d%20like%20to%20book%20an%20intro%20call.%0A%0ACompany%3A%0AProject%20scope%3A%0ATimeline%3A%0A"
+                href="mailto:hello@kernelandoak.com?subject=Book%20a%2030-minute%20intro%20call&body=Hi%20Kernel%20%26%20Oak%20%E2%80%94%20I%27d%20like%20to%20book%20an%20intro%20call.%0A%0ACompany%3A%0AProject%20scope%3A%0ATimeline%3A%0A"
                 className="font-[family-name:var(--font-display)] text-3xl md:text-4xl tracking-tight link-sweep"
               >
                 Book 30 min →
@@ -125,7 +126,7 @@ export function Contact() {
                 ].map((c) => (
                   <label key={c.v} className="cursor-pointer">
                     <input type="checkbox" name="scope" value={c.v} className="peer sr-only" />
-                    <span className="inline-block px-4 py-2 rounded-full border border-border-hi text-sm peer-checked:bg-accent peer-checked:text-black peer-checked:border-accent transition-colors">
+                    <span className="chip peer-checked:[&]:chip-checked peer-checked:bg-accent peer-checked:text-[var(--k-canvas-bg)] peer-checked:border-accent">
                       {c.l}
                     </span>
                   </label>
@@ -142,6 +143,8 @@ export function Contact() {
                 placeholder="What are you building, and who is it for?"
               />
             </label>
+
+            <Turnstile />
 
             <SubmitButton />
 

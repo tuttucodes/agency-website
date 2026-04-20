@@ -1,0 +1,28 @@
+---
+title: "The design system tax nobody warns you about."
+dek: "Three patterns we now refuse to ship, and what they reveal about the difference between consistency and craft."
+category: "Design"
+date: "2026-01-12"
+readMins: 6
+author: "Rafael Cortez"
+---
+
+Design systems are good. Most design systems we inherit are bad — not because the tokens are wrong, but because the system has quietly outlawed every interesting decision. Here are three patterns we now refuse to ship.
+
+## 1 — The 8-point grid as a moral position
+
+The 8pt grid was a heuristic for screens with low subpixel rendering and large headers. On a modern dense console it produces a soup of identical-looking cards. Break the grid where the eye needs anchor — a 22px gap above the headline reads cleaner than 24, and the system survives.
+
+## 2 — Ten variants of one button
+
+Every system we audit has primary, secondary, tertiary, ghost, link, icon, destructive, loading, disabled, and a final variant nobody can name. Pick three. Force the team to defend the others. Half disappear in a sprint.
+
+> A consistent interface is the floor. A coherent interface is the ceiling. The system should help you reach the ceiling, not lock you to the floor.
+
+## 3 — Tokens that describe paint, not intent
+
+Tokens named `gray-500` migrate badly. Tokens named `border-default` migrate forever. Name what the color is for, not what it looks like — your dark mode launch will be a config swap instead of a six-week refactor.
+
+## The underlying error
+
+All three failures come from the same place: treating the system as a law code rather than a shared language. Laws exist to be enforced. Languages exist to communicate. The second one scales.

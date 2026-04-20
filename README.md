@@ -1,4 +1,4 @@
-# HELIX — agency site
+# Kernel & Oak — agency site
 
 Next.js 16 · React 19 · Tailwind 4 · Supabase · Vercel · Cloudflare DNS.
 
@@ -48,7 +48,7 @@ If you do want the Cloudflare proxy (WAF, bot management, Workers), read https:/
 
 ### Domain addition on Vercel
 
-In the Vercel dashboard → Project → Settings → Domains → add `helix.studio` and `www.helix.studio`. Vercel will show the exact DNS records to paste back into Cloudflare — always trust the dashboard over this README.
+In the Vercel dashboard → Project → Settings → Domains → add `kernelandoak.vercel.app` and `www.kernelandoak.vercel.app`. Vercel will show the exact DNS records to paste back into Cloudflare — always trust the dashboard over this README.
 
 ## Project layout
 

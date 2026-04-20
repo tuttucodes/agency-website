@@ -1,4 +1,4 @@
--- HELIX agency site — leads capture
+-- Kernel & Oak agency site — leads capture
 -- Apply in Supabase SQL editor (Project → SQL Editor → New query)
 
 create extension if not exists "pgcrypto";

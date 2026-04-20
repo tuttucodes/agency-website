@@ -1,44 +1,5 @@
-const SERVICES = [
-  {
-    n: "01",
-    title: ["Native", "Applications"],
-    body:
-      "iOS, Android, and desktop products with the motion discipline of first-party apps. Swift / Kotlin / React Native / Electron — chosen per engagement, never ideology.",
-    bullets: [
-      "SwiftUI & Jetpack Compose",
-      "React Native + Expo router",
-      "Offline-first sync",
-      "App Store launch & growth",
-    ],
-    accent: false,
-  },
-  {
-    n: "02",
-    title: ["Web", "Platforms"],
-    body:
-      "High-conversion marketing surfaces and dense SaaS consoles. Next.js on Vercel Fluid Compute; every page a statement, every interaction sub-150ms.",
-    bullets: [
-      "Next.js App Router + RSC",
-      "Headless CMS & MDX",
-      "Design systems in TS",
-      "Core Web Vitals 98+",
-    ],
-    accent: false,
-  },
-  {
-    n: "03",
-    title: ["Applied", "AI Systems"],
-    body:
-      "Agents, RAG pipelines, and evaluation harnesses that survive contact with real users. Typed, observable, cost-instrumented from day one.",
-    bullets: [
-      "Claude / GPT / open-weight",
-      "LangGraph & custom agents",
-      "Evals, traces, guardrails",
-      "Prod-grade RAG + reranking",
-    ],
-    accent: true,
-  },
-];
+import Link from "next/link";
+import { SERVICES } from "@/lib/services";
 
 export function Services() {
   return (
@@ -58,41 +19,53 @@ export function Services() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 border-t border-border-hi">
-          {SERVICES.map((s, i) => (
-            <article
-              key={s.n}
-              className={`svc-card group relative p-6 sm:p-8 md:p-10 border-b border-border-hi min-h-[420px] sm:min-h-[520px] flex flex-col ${
-                i < SERVICES.length - 1 ? "md:border-r" : ""
-              } md:border-b-0 ${i === SERVICES.length - 1 ? "border-b-0" : ""}`}
-            >
-              <div className="flex items-start justify-between">
-                <span className="font-[family-name:var(--font-mono)] text-xs text-text-mute">
-                  {s.n}
+          {SERVICES.map((s, i) => {
+            const accent = s.slug === "applied-ai";
+            return (
+              <Link
+                key={s.slug}
+                href={`/services/${s.slug}`}
+                aria-label={`Explore ${s.title} — ${s.kicker}`}
+                className={`svc-card group relative p-6 sm:p-8 md:p-10 border-b border-border-hi min-h-[420px] sm:min-h-[520px] flex flex-col ${
+                  i < SERVICES.length - 1 ? "md:border-r" : ""
+                } md:border-b-0 ${i === SERVICES.length - 1 ? "border-b-0" : ""}`}
+              >
+                <div className="flex items-start justify-between">
+                  <span className="font-[family-name:var(--font-mono)] text-xs text-text-mute">
+                    {s.n}
+                  </span>
+                  <svg className="arrow" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                    <path
+                      d="M8 20 L20 8 M20 8 H10 M20 8 V18"
+                      stroke={accent ? "var(--k-accent)" : "currentColor"}
+                      strokeWidth="1.4"
+                    />
+                  </svg>
+                </div>
+                <h3 className="mt-14 sm:mt-20 font-[family-name:var(--font-display)] text-3xl sm:text-4xl md:text-5xl leading-[0.95] tracking-tight">
+                  {s.title.split(" ").map((word, wi, arr) => (
+                    <span key={word} className={wi === arr.length - 1 && accent ? "text-accent" : ""}>
+                      {wi > 0 && " "}
+                      {word}
+                      {wi === 0 && arr.length > 1 && <br />}
+                    </span>
+                  ))}
+                </h3>
+                <p className="mt-6 text-text-dim leading-relaxed">{s.summary.split(".").slice(0, 2).join(".")}.</p>
+                <ul className="mt-auto pt-8 space-y-2.5 text-sm font-[family-name:var(--font-mono)] text-text-dim">
+                  {s.stack.slice(0, 4).map((b) => (
+                    <li key={b} className="flex items-center gap-3">
+                      <span className={`h-px w-4 ${accent ? "bg-accent" : "bg-text-mute"}`} />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+                <span className="mt-8 text-xs font-[family-name:var(--font-mono)] text-text-mute group-hover:text-accent transition-colors">
+                  Explore discipline →
                 </span>
-                <svg className="arrow" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-                  <path
-                    d="M8 20 L20 8 M20 8 H10 M20 8 V18"
-                    stroke={s.accent ? "#00FF88" : "#FAFAFA"}
-                    strokeWidth="1.4"
-                  />
-                </svg>
-              </div>
-              <h3 className="mt-14 sm:mt-20 font-[family-name:var(--font-display)] text-3xl sm:text-4xl md:text-5xl leading-[0.95] tracking-tight">
-                {s.title[0]}
-                <br />
-                {s.accent ? <span className="text-accent">{s.title[1]}</span> : s.title[1]}
-              </h3>
-              <p className="mt-6 text-text-dim leading-relaxed">{s.body}</p>
-              <ul className="mt-auto pt-8 space-y-2.5 text-sm font-[family-name:var(--font-mono)] text-text-dim">
-                {s.bullets.map((b) => (
-                  <li key={b} className="flex items-center gap-3">
-                    <span className={`h-px w-4 ${s.accent ? "bg-accent" : "bg-text-mute"}`} />
-                    {b}
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

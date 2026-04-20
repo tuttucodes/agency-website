@@ -8,6 +8,8 @@ import { Capabilities } from "@/components/Capabilities";
 import { Process } from "@/components/Process";
 import { Testimonial } from "@/components/Testimonial";
 import { Studio } from "@/components/Studio";
+import { Insights } from "@/components/Insights";
+import { Faq } from "@/components/Faq";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
 
@@ -25,6 +27,8 @@ export default function Page() {
         <Process />
         <Testimonial />
         <Studio />
+        <Insights />
+        <Faq />
         <Contact />
       </main>
       <Footer />
